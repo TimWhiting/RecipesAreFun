@@ -67,16 +67,6 @@ export default {
     this.getAllRecipes();
   },
   methods: {
-    async getAllRecipes() {
-      let response = await axios.get("/api/recipes");
-      this.recipes = response.data;
-      if (this.recipes.length > 0) {
-        this.recipeIndex = 0;
-      } else {
-        this.resetNewRecipe();
-        this.mode = "add";
-      }
-    },
     resetNewRecipe() {
       this.newRecipe = { ingredients: [], title: "", instructions: [] };
       this.newIngredient = "";
@@ -126,43 +116,6 @@ export default {
         return false;
       }
     },
-    async saveRecipe() {
-      try {
-        if (this.checkData()) {
-          const formData = new FormData();
-          formData.append("photo", this.newImage, this.newImage.name);
-          let photoResponse = await axios.post("/api/photos", formData);
-
-          this.newRecipe.user = this.currentUser;
-          this.newRecipe.imagePath = photoResponse.data.path;
-
-          let recipeResponse = await axios.post("/api/recipes", this.newRecipe);
-          this.resetNewRecipe();
-          this.mode = "view";
-          this.getAllRecipes();
-        }
-      } catch (error) {
-        this.error =
-          "Error saving recipe, look in the console if you dare (probably your image is too big)";
-        console.log(error);
-      }
-    },
-    async updateRecipe() {
-      try {
-        if (this.checkData()) {
-          let recipeResponse = await axios.put(
-            "/api/recipes/" + this.newRecipe._id,
-            this.newRecipe
-          );
-          this.resetNewRecipe();
-          this.mode = "view";
-          this.getAllRecipes();
-        }
-      } catch (error) {
-        this.error = "Error updated recipe, look in the console if you dare";
-        console.log(error);
-      }
-    },
     selectRecipe(index) {
       this.mode = "view";
       this.recipeIndex = index;
@@ -181,17 +134,6 @@ export default {
     },
     removeInstruction(index) {
       this.newRecipe.instructions.splice(index, 1);
-    },
-    async handleDeleteRecipe() {
-      try {
-        let recipeResponse = await axios.delete(
-          "/api/recipes/" + this.currentRecipe._id
-        );
-        this.getAllRecipes();
-      } catch (error) {
-        this.error = "Error deleting recipe, look in the console if you dare";
-        console.log(error);
-      }
     }
   }
 };

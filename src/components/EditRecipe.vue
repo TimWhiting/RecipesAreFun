@@ -54,6 +54,14 @@ export default {
       newIngredient: "",
       newInstruction: ""
     };
+  },
+  methods: {
+    saveRecipe() {
+      this.$store.dispatch("saveRecipe", {
+        newRecipe: this.newRecipe,
+        newImage: this.newImage
+      });
+    }
   }
 };
 </script>

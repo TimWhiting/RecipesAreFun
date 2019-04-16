@@ -60,72 +60,55 @@ export default new Vuex.Store({
         return "";
       }
     },
-    async getAllRecipes() {
+    async getAllRecipes(context) {
       let response = await axios.get("/api/recipes");
-      this.recipes = response.data;
-      if (this.recipes.length > 0) {
-        this.recipeIndex = 0;
-      } else {
-        this.resetNewRecipe();
-        this.mode = "add";
-      }
+      context.commit("setRecipes", response.data);
     },
-    async saveRecipe(context, data) {
-      let newImage = data.newImage;
-      let newRecipe = data.newRecipe;
+    async saveRecipe(context, newInfo) {
+      let newImage = newInfo.newImage;
+      let newRecipe = newInfo.newRecipe;
       try {
-        if (this.checkData()) {
-          const formData = new FormData();
-          formData.append("photo", newImage, newImage.name);
-          let photoResponse = await axios.post("/api/photos", formData);
-
-          newRecipe.user = context.state.user;
-          newRecipe.imagePath = photoResponse.data.path;
-
-          await axios.post("/api/recipes", newRecipe);
-          this.resetNewRecipe();
-          this.mode = "view";
-          this.getAllRecipes();
-        }
+        const formData = new FormData();
+        formData.append("photo", newImage, newImage.name);
+        formData.append("recipe", newRecipe);
+        await axios.post("/api/recipes", formData);
+        context.dispatch("getAllRecipes");
       } catch (error) {
-        this.error =
-          "Error saving recipe, look in the console if you dare (probably your image is too big)";
+        // this.error =
+        //   "Error saving recipe, look in the console if you dare (probably your image is too big)";
         console.log(error);
       }
     },
-    async updateRecipe() {
+    async updateRecipe(context, newRecipe) {
       try {
-        if (this.checkData()) {
-          await axios.put("/api/recipes/" + this.newRecipe._id, this.newRecipe);
-          this.resetNewRecipe();
-          this.mode = "view";
-          this.getAllRecipes();
-        }
+        await axios.put("/api/recipes/" + newRecipe._id, newRecipe);
+        context.dispatch("getAllRecipes");
       } catch (error) {
-        this.error = "Error updated recipe, look in the console if you dare";
+        //this.error = "Error updated recipe, look in the console if you dare";
         console.log(error);
       }
     },
-    async handleDeleteRecipe() {
+    async handleDeleteRecipe(context, recipe) {
       try {
-        await axios.delete("/api/recipes/" + this.currentRecipe._id);
-        this.getAllRecipes();
+        await axios.delete("/api/recipes/" + recipe._id);
+        context.dispatch("getAllRecipes");
       } catch (error) {
-        this.error = "Error deleting recipe, look in the console if you dare";
+        //this.error = "Error deleting recipe, look in the console if you dare";
         console.log(error);
       }
     },
-    async getPublicRecipes() {
+    async getPublicRecipes(context) {
       //get a random recipe
       //format it
       //add it to the container
+      let randomRecipes = [];
       let numImages = 15;
       for (let i = 0; i < numImages; i++) {
-        console.log(getRandomMealURL);
         let recipe = await axios.get(getRandomMealURL);
         //console.log(recipe);
-        this.recipes.push(recipe.data.meals[0]);
+        randomRecipes.push(recipe.data.meals[0]);
       }
+      context.commit("setRecipes", randomRecipes);
     }
   }
 });

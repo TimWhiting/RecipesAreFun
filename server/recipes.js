@@ -51,18 +51,6 @@ const recipeSchema = new mongoose.Schema({
 // Create a model for recipes in the recipe collection.
 const Recipe = mongoose.model("Recipe", recipeSchema);
 
-// Upload a photo. Uses the multer middleware for the upload and then returns
-// the path where the photo is stored in the file system.
-router.post("/api/photos", upload.single("photo"), async (req, res) => {
-  // Just a safety check
-  if (!req.file) {
-    return res.sendStatus(400);
-  }
-  res.send({
-    path: "/images/" + req.file.filename
-  });
-});
-
 // Create a new item in the recipe database: takes a title and a path to an image.
 router.post(
   "/",
@@ -72,10 +60,10 @@ router.post(
   async (req, res) => {
     const recipe = new Recipe({
       user: req.user,
-      title: req.body.title,
+      title: req.body.recipe.title,
       imagePath: "/images/" + req.file.filename,
-      instructions: req.body.instructions,
-      ingredients: req.body.ingredients
+      instructions: req.body.recipe.instructions,
+      ingredients: req.body.recipe.ingredients
     });
     try {
       await recipe.save();

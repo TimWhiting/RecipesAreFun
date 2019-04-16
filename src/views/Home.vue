@@ -14,12 +14,15 @@
 export default {
   name: "Home",
   data: function() {
-    return {
-      recipes: []
-    };
+    return {};
+  },
+  computed: {
+    recipes() {
+      return this.$store.state.recipes;
+    }
   },
   created() {
-    this.getAllRecipes();
+    this.$store.dispatch("getPublicRecipes");
   },
   methods: {}
 };

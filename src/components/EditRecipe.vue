@@ -1,10 +1,7 @@
 <template>
   <div>
-    <figure v-if="mode == 'edit'">
+    <figure>
       <img v-bind:src="newRecipe.imagePath">
-    </figure>
-    <figure v-else id="spiceFigure">
-      <img src="/images/spice.jpg">
     </figure>
     <section class="recipeCard">
       <p class="error">{{this.error}}</p>
@@ -35,10 +32,7 @@
           </li>
         </ol>
       </section>
-      <input v-if="mode == 'add'" type="file" name="photo" @change="changeImage">
-      <p v-if="mode == 'add'">Large images will take a long time to upload and give you an error</p>
-      <button v-if="mode == 'edit'" @click="updateRecipe">Update Recipe</button>
-      <button v-else @click="saveRecipe">Save Recipe</button>
+      <button @click="updateRecipe">Update Recipe</button>
       <br>
     </section>
   </div>
@@ -52,46 +46,28 @@ export default {
       newRecipe: { ingredients: [], title: "", instructions: [] },
       newImage: null,
       newIngredient: "",
-      newInstruction: ""
+      newInstruction: "",
+      error: ""
     };
   },
+  computed: {
+    user() {
+      return this.$store.state.user;
+    }
+  },
   methods: {
-    async saveRecipe() {
-      if (this.checkData()) {
-        await this.$store.dispatch("saveRecipe", {
-          newRecipe: this.newRecipe,
-          newImage: this.newImage
-        });
-        this.$emit("saved");
-      }
-    },
     async updateRecipe() {
       if (this.checkData()) {
         await this.$store.dispatch("updateRecipe", this.newRecipe);
         this.$emit("updated");
       }
     },
-    handleAddRecipe() {
-      this.resetNewRecipe();
-      this.mode = "add";
-    },
-    handleEditRecipe() {
-      this.mode = "edit";
-      //placeholders
-      this.newRecipe = this.currentRecipe;
-    },
+
     removeIngredient(index) {
       this.newRecipe.ingredients.splice(index, 1);
     },
     removeInstruction(index) {
       this.newRecipe.instructions.splice(index, 1);
-    },
-    resetNewRecipe() {
-      this.newRecipe = { ingredients: [], title: "", instructions: [] };
-      this.newIngredient = "";
-      this.newInstruction = "";
-      this.error = "";
-      this.newImage = null;
     },
     addIngredient() {
       this.newRecipe.ingredients.push(this.newIngredient);
@@ -101,37 +77,26 @@ export default {
       this.newRecipe.instructions.push(this.newInstruction);
       this.newInstruction = "";
     },
-    changeImage(event) {
-      this.newImage = event.target.files[0];
-    },
     checkData() {
-      if (this.allUsers.includes(this.currentUser)) {
-        if (
-          this.mode == "edit" ||
-          (this.newImage != null && this.newImage.name != "")
-        ) {
-          if (this.newRecipe.title != "") {
-            if (this.newRecipe.ingredients.length >= 1) {
-              if (this.newRecipe.instructions.length >= 1) {
-                return true;
-              } else {
-                this.error = "You need to specify at least one instruction!";
-                return false;
-              }
+      if (this.user != null) {
+        if (this.newRecipe.title != "") {
+          if (this.newRecipe.ingredients.length >= 1) {
+            if (this.newRecipe.instructions.length >= 1) {
+              return true;
             } else {
-              this.error = "You need to specify at least one ingredient!";
+              this.error = "You need to specify at least one instruction!";
               return false;
             }
           } else {
-            this.error = "You need to specify a title!";
+            this.error = "You need to specify at least one ingredient!";
             return false;
           }
         } else {
-          this.error = "You need to choose a file to upload!";
+          this.error = "You need to specify a title!";
           return false;
         }
       } else {
-        this.error = "You need to specify a user!";
+        this.error = "You need to register or login!";
         return false;
       }
     }

@@ -1,12 +1,3 @@
-<!--
-if (this.recipes.length > 0) {
-        this.recipeIndex = 0;
-      } else {
-        this.resetNewRecipe();
-        this.mode = "add";
-      }
--->
-
 <template>
   <main class="myRecipeContent">
     <aside class="myRecipeList">
@@ -25,18 +16,19 @@ if (this.recipes.length > 0) {
       <section class="menu">
         <div class="controls">
           <button v-if="mode != 'add'" @click="handleAddRecipe">
-            <img src="/images/plus.png">
+            <img src="@/assets/plus.png">
           </button>
           <button v-if="mode == 'view'" @click="handleEditRecipe">
-            <img src="/images/pencil.png">
+            <img src="@/assets/pencil.png">
           </button>
           <button v-if="mode == 'view'" @click="handleDeleteRecipe">
-            <img src="/images/trash.png">
+            <img src="@/assets/trash.png">
           </button>
         </div>
       </section>
-      <edit-recipe v-bind:class="{myRecipe:true, adding: mode=='add'} " v-if="showEditForm"></edit-recipe>
-      <recipe class="myRecipe" v-else></recipe>
+      <add-recipe v-if="showAdd" class="adding myRecipe"></add-recipe>
+      <edit-recipe class="myRecipe" v-else-if="mode=='edit'"></edit-recipe>
+      <recipe class="myRecipe" v-bind:currentRecipe="currentRecipe" v-else></recipe>
     </section>
   </main>
 </template>
@@ -44,25 +36,27 @@ if (this.recipes.length > 0) {
 <script>
 import EditRecipe from "@/components/EditRecipe.vue";
 import Recipe from "@/components/Recipe.vue";
+import AddRecipe from "@/components/AddRecipe.vue";
 export default {
   name: "MyRecipes",
   components: {
     EditRecipe,
-    Recipe
+    Recipe,
+    AddRecipe
   },
   data: function() {
     return {
-      recipes: [],
       recipeIndex: 0,
       mode: "view",
       error: ""
     };
   },
   computed: {
-    showEditForm() {
-      return (
-        this.mode == "edit" || this.mode == "add" || this.recipes.length < 1
-      );
+    showAdd() {
+      return this.mode == "add" || this.recipes.length < 1;
+    },
+    recipes() {
+      return this.$store.state.recipes;
     },
     currentRecipe() {
       if (this.recipeIndex < this.recipes.length) {
@@ -73,9 +67,19 @@ export default {
     }
   },
   created() {
-    this.getAllRecipes();
+    this.$store.dispatch("getAllRecipes");
   },
   methods: {
+    handleEditRecipe() {
+      this.mode = "edit";
+      this.newRecipe = this.currentRecipe;
+    },
+    handleDeleteRecipe() {
+      //this.newRecipe = this.currentRecipe;
+    },
+    handleAddRecipe() {
+      this.mode = "add";
+    },
     selectRecipe(index) {
       this.mode = "view";
       this.recipeIndex = index;

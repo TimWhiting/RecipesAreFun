@@ -3,13 +3,13 @@
     <h1>Login</h1>
     <section class="loginCard">
       <p class="smallCenteredHeader">Please sign in to access your recipes.</p>
-      <form class="loginForm">
+      <form @submit.prevent="login" class="loginForm">
         <label for="username">Username:</label>
         <input v-model="username" type="email" id="username" name="username">
 
         <label for="password">Password:</label>
         <input v-model="password" type="password" id="password" name="password">
-        <button @click="login">Login</button>
+        <button type="submit">Login</button>
       </form>
     </section>
   </main>

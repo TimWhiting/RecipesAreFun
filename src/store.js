@@ -10,6 +10,7 @@ export default new Vuex.Store({
   state: {
     user: null,
     recipes: [],
+    publicRecipes: [],
     currentRecipe: null
   },
   mutations: {
@@ -18,6 +19,9 @@ export default new Vuex.Store({
     },
     setRecipes(state, recipes) {
       state.recipes = recipes;
+    },
+    setPublicRecipes(state, recipes) {
+      state.publicRecipes = recipes;
     },
     setCurrentRecipe(state, currentRecipe) {
       state.currentRecipe = currentRecipe;
@@ -102,13 +106,13 @@ export default new Vuex.Store({
       //format it
       //add it to the container
       let randomRecipes = [];
-      let numImages = 15;
+      let numImages = 16;
       for (let i = 0; i < numImages; i++) {
         let recipe = await axios.get(getRandomMealURL);
         //console.log(recipe);
         randomRecipes.push(recipe.data.meals[0]);
       }
-      context.commit("setRecipes", randomRecipes);
+      context.commit("setPublicRecipes", randomRecipes);
     }
   }
 });

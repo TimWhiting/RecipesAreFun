@@ -28,7 +28,10 @@
 
 <script>
 export default {
-  name: "Recipe"
+  name: "Recipe",
+  props: {
+    currentRecipe: Object
+  }
 };
 </script>
 

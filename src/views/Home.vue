@@ -18,7 +18,7 @@ export default {
   },
   computed: {
     recipes() {
-      return this.$store.state.recipes;
+      return this.$store.state.publicRecipes;
     }
   },
   created() {

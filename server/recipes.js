@@ -22,14 +22,14 @@ if (isLocal) {
 } else {
   if (isTim) {
     upload = multer({
-      dest: "/var/www/cp4.twhiting.org/images/",
+      dest: "/var/www/cp5.twhiting.org/images/",
       limits: {
         fileSize: 10000000
       }
     });
   } else {
     upload = multer({
-      dest: "/var/www/cp4.mycs260website.com/images/",
+      dest: "/var/www/cp5.mycs260website.com/images/",
       limits: {
         fileSize: 10000000
       }

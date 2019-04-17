@@ -51,29 +51,38 @@ const recipeSchema = new mongoose.Schema({
 // Create a model for recipes in the recipe collection.
 const Recipe = mongoose.model("Recipe", recipeSchema);
 
-// Create a new item in the recipe database: takes a title and a path to an image.
 router.post(
-  "/",
+  "/photos",
   auth.verifyToken,
   User.verify,
   upload.single("photo"),
   async (req, res) => {
-    const recipe = new Recipe({
-      user: req.user,
-      title: req.body.title,
-      imagePath: "/images/" + req.file.filename,
-      instructions: req.body.instructions,
-      ingredients: req.body.ingredients
-    });
-    try {
-      await recipe.save();
-      res.send(recipe);
-    } catch (error) {
-      console.log(error);
-      res.sendStatus(500);
+    if (!req.file) {
+      return res.sendStatus(400);
     }
+    res.send({
+      path: "/images/" + req.file.filename
+    });
   }
 );
+
+// Create a new item in the recipe database: takes a title and a path to an image.
+router.post("/", auth.verifyToken, User.verify, async (req, res) => {
+  const recipe = new Recipe({
+    user: req.user,
+    title: req.body.title,
+    imagePath: req.body.imagePath,
+    instructions: req.body.instructions,
+    ingredients: req.body.ingredients
+  });
+  try {
+    await recipe.save();
+    res.send(recipe);
+  } catch (error) {
+    console.log(error);
+    res.sendStatus(500);
+  }
+});
 
 // Get a list of all of the items in the recipe database.
 router.get("/", auth.verifyToken, User.verify, async (req, res) => {

@@ -79,10 +79,9 @@ export default new Vuex.Store({
       try {
         const formData = new FormData();
         formData.append("photo", newImage, newImage.name);
-        formData.append("title", newRecipe.title);
-        formData.append("instructions", newRecipe.instructions);
-        formData.append("ingredients", newRecipe.ingredients);
-        await axios.post("/api/recipes", formData);
+        let photoResponse = await axios.post("/api/recipes/photos", formData);
+        newRecipe.imagePath = photoResponse.data.path;
+        await axios.post("/api/recipes", newRecipe);
         context.dispatch("getAllRecipes");
       } catch (error) {
         // this.error =

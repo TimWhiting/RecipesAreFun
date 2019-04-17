@@ -27,7 +27,7 @@
         </div>
       </section>
       <add-recipe v-if="showAdd" class="adding myRecipe"></add-recipe>
-      <edit-recipe class="myRecipe" v-else-if="mode=='edit'"></edit-recipe>
+      <edit-recipe class="myRecipe" v-bind:newRecipe="currentRecipe" v-else-if="mode=='edit'"></edit-recipe>
       <recipe class="myRecipe" v-bind:currentRecipe="currentRecipe" v-else></recipe>
     </section>
   </main>
@@ -66,8 +66,12 @@ export default {
       }
     }
   },
-  created() {
-    this.$store.dispatch("getAllRecipes");
+  async created() {
+    await this.$store.dispatch("getUser");
+    await this.$store.dispatch("getAllRecipes");
+    if (!this.$store.state.user) {
+      this.$router.push("login");
+    }
   },
   methods: {
     handleEditRecipe() {
@@ -75,7 +79,7 @@ export default {
       this.newRecipe = this.currentRecipe;
     },
     handleDeleteRecipe() {
-      //this.newRecipe = this.currentRecipe;
+      this.$store.dispatch("handleDeleteRecipe", this.currentRecipe);
     },
     handleAddRecipe() {
       this.mode = "add";

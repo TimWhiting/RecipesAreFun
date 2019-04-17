@@ -23,8 +23,10 @@
           <!--  <router-link class="nav-item nav-link" to="/mealPlan"
               >Meal Plan</router-link
           >-->
-          <router-link class="nav-item nav-link login" to="/register">Register</router-link>
-          <router-link class="nav-item nav-link login" to="/login">Login</router-link>
+          <div class="fillThisSpaceInTheMiddle"></div>
+          <router-link v-if="!user" class="nav-item nav-link login" to="/register">Register</router-link>
+          <router-link v-if="!user" class="nav-item nav-link login" to="/login">Login</router-link>
+          <button v-if="user" v-on:click="logout" class="nav-item nav-link login logout">Logout</button>
         </div>
       </div>
     </nav>
@@ -39,18 +41,24 @@
 </template>
 
 <script>
+export default {
+  computed: {
+    user() {
+      return this.$store.state.user;
+    }
+  },
+  async created() {
+    await this.$store.dispatch("getUser");
+  },
+  methods: {
+    logout() {
+      this.$store.dispatch("logout");
+    }
+  }
+};
 </script>
 
 <style>
-/*
-TO-FIX:
-- 
-
-STYLING IDEAS:
-- Hover links (My Recipes)
-*/
-
-/* GENERAL STYLES-----------------------------------------------------------------------------------------------------*/
 body {
   display: flex;
   flex-direction: column;
@@ -342,11 +350,24 @@ label {
   color: rgba(200, 213, 185, 1);
 }
 
-.login {
+.fillThisSpaceInTheMiddle {
   flex-grow: 1;
+}
+
+.login {
   text-align: right;
   /*background-color: rgb(106, 108, 124) !important;*/
   /*border-left: 1px solid rgb(107, 110, 126); */
+}
+
+.logout {
+  background-color: transparent;
+  border-style: none;
+}
+
+.logout:focus {
+  border-style: none;
+  outline: 0px;
 }
 
 /* Mobile Styles */

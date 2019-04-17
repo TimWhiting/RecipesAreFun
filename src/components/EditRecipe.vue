@@ -41,10 +41,11 @@
 <script>
 export default {
   name: "EditRecipe",
+  props: {
+    newRecipe: Object
+  },
   data: () => {
     return {
-      newRecipe: { ingredients: [], title: "", instructions: [] },
-      newImage: null,
       newIngredient: "",
       newInstruction: "",
       error: ""

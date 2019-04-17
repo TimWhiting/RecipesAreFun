@@ -14,7 +14,7 @@ const isTim = true;
 var upload = undefined;
 if (isLocal) {
   upload = multer({
-    dest: "./public/images/",
+    dest: "../public/images/",
     limits: {
       fileSize: 10000000
     }
@@ -60,10 +60,10 @@ router.post(
   async (req, res) => {
     const recipe = new Recipe({
       user: req.user,
-      title: req.body.recipe.title,
+      title: req.body.title,
       imagePath: "/images/" + req.file.filename,
-      instructions: req.body.recipe.instructions,
-      ingredients: req.body.recipe.ingredients
+      instructions: req.body.instructions,
+      ingredients: req.body.ingredients
     });
     try {
       await recipe.save();
@@ -78,7 +78,7 @@ router.post(
 // Get a list of all of the items in the recipe database.
 router.get("/", auth.verifyToken, User.verify, async (req, res) => {
   try {
-    let recipes = await Recipe.find();
+    let recipes = await Recipe.find().populate("user");
     res.send(recipes);
   } catch (error) {
     console.log(error);

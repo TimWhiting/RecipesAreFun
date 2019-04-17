@@ -65,8 +65,12 @@ export default new Vuex.Store({
       }
     },
     async getAllRecipes(context) {
-      let response = await axios.get("/api/recipes");
-      context.commit("setRecipes", response.data);
+      try {
+        let response = await axios.get("/api/recipes");
+        context.commit("setRecipes", response.data);
+      } catch (error) {
+        console.error(error);
+      }
     },
     async saveRecipe(context, newInfo) {
       let newImage = newInfo.newImage;
@@ -74,13 +78,15 @@ export default new Vuex.Store({
       try {
         const formData = new FormData();
         formData.append("photo", newImage, newImage.name);
-        formData.append("recipe", newRecipe);
+        formData.append("title", newRecipe.title);
+        formData.append("instructions", newRecipe.instructions);
+        formData.append("ingredients", newRecipe.ingredients);
         await axios.post("/api/recipes", formData);
         context.dispatch("getAllRecipes");
       } catch (error) {
         // this.error =
         //   "Error saving recipe, look in the console if you dare (probably your image is too big)";
-        console.log(error);
+        console.error(error);
       }
     },
     async updateRecipe(context, newRecipe) {
@@ -89,7 +95,7 @@ export default new Vuex.Store({
         context.dispatch("getAllRecipes");
       } catch (error) {
         //this.error = "Error updated recipe, look in the console if you dare";
-        console.log(error);
+        console.error(error);
       }
     },
     async handleDeleteRecipe(context, recipe) {
@@ -98,7 +104,7 @@ export default new Vuex.Store({
         context.dispatch("getAllRecipes");
       } catch (error) {
         //this.error = "Error deleting recipe, look in the console if you dare";
-        console.log(error);
+        console.error(error);
       }
     },
     async getPublicRecipes(context) {

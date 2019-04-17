@@ -5,7 +5,7 @@
     </figure>
     <section class="recipeCard">
       <h2 class="recipeTitle">{{ currentRecipe.title }}</h2>
-      <h4>Created by {{ currentRecipe.user }}</h4>
+      <h4>Created by {{ currentRecipe.user.name }}</h4>
       <section class="ingredientSection">
         <ul class="ingredients">
           <li

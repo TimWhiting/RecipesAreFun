@@ -50,6 +50,7 @@ export default new Vuex.Store({
       try {
         await axios.delete("/api/users");
         context.commit("setUser", null);
+        context.commit("setRecipes", []);
         return "";
       } catch (error) {
         return error.response.data.message;

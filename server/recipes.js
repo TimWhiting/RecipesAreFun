@@ -78,7 +78,7 @@ router.post(
 // Get a list of all of the items in the recipe database.
 router.get("/", auth.verifyToken, User.verify, async (req, res) => {
   try {
-    let recipes = await Recipe.find().populate("user");
+    let recipes = await Recipe.find({ user: req.user }).populate("user");
     res.send(recipes);
   } catch (error) {
     console.log(error);

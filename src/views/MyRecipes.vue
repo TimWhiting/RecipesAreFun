@@ -26,8 +26,13 @@
           </button>
         </div>
       </section>
-      <add-recipe v-if="showAdd" class="adding myRecipe"></add-recipe>
-      <edit-recipe class="myRecipe" v-bind:newRecipe="currentRecipe" v-else-if="mode=='edit'"></edit-recipe>
+      <add-recipe v-if="showAdd" class="adding myRecipe" @saved="mode = 'view'"></add-recipe>
+      <edit-recipe
+        class="myRecipe"
+        v-bind:newRecipe="currentRecipe"
+        v-else-if="mode=='edit'"
+        @updated="mode = 'view'"
+      ></edit-recipe>
       <recipe class="myRecipe" v-bind:currentRecipe="currentRecipe" v-else></recipe>
     </section>
   </main>
@@ -76,7 +81,6 @@ export default {
   methods: {
     handleEditRecipe() {
       this.mode = "edit";
-      this.newRecipe = this.currentRecipe;
     },
     handleDeleteRecipe() {
       this.$store.dispatch("handleDeleteRecipe", this.currentRecipe);

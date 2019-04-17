@@ -84,6 +84,7 @@ export default {
     },
     handleDeleteRecipe() {
       this.$store.dispatch("handleDeleteRecipe", this.currentRecipe);
+      this.recipeIndex = 0;
     },
     handleAddRecipe() {
       this.mode = "add";
@@ -94,6 +95,8 @@ export default {
     }
   }
 };
+//Deleting fails to refresh page
+//Adding a recipe, the ingredients and probably instructions aren't an array
 </script>
 
 <style scoped>

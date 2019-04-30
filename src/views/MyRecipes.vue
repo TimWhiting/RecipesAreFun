@@ -96,8 +96,6 @@ export default {
   }
 };
 //Deleting fails to refresh page
-//Adding a recipe, the ingredients and probably instructions aren't an array
-//Images don't show up
 </script>
 
 <style scoped>

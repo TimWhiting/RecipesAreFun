@@ -12,7 +12,7 @@ app.use(
 const mongoose = require("mongoose");
 
 // connect to the database
-mongoose.connect("mongodb://localhost:27017/chocolate", {
+mongoose.connect("mongodb://localhost:27017/recipes", {
   useNewUrlParser: true
 });
 
@@ -23,5 +23,8 @@ app.use("/api/users", users.routes);
 
 const recipes = require("./recipes.js");
 app.use("/api/recipes", recipes.routes);
+
+const ingredients = require("./ingredients.js");
+app.use("/api/ingredients", ingredients.routes);
 
 app.listen(3100, () => console.log("Server listening on port 3100!"));

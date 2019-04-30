@@ -18,6 +18,7 @@ mongoose.connect("mongodb://localhost:27017/recipes", {
 
 const cookieParser = require("cookie-parser");
 app.use(cookieParser());
+
 const users = require("./users.js");
 app.use("/api/users", users.routes);
 
@@ -26,5 +27,8 @@ app.use("/api/recipes", recipes.routes);
 
 const ingredients = require("./ingredients.js");
 app.use("/api/ingredients", ingredients.routes);
+
+const groceryList = require("./grocerylist.js");
+app.use("/api/grocery-list", groceryList.routes);
 
 app.listen(3100, () => console.log("Server listening on port 3100!"));

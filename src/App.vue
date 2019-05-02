@@ -1,35 +1,47 @@
 <template>
   <div id="app">
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-      <router-link class="navbar-brand" to="/">Recipes are Fun</router-link>
-      <button
-        class="navbar-toggler"
-        type="button"
-        data-toggle="collapse"
-        data-target="#navbarNavAltMarkup"
-        aria-controls="navbarNavAltMarkup"
-        aria-expanded="false"
-        aria-label="Toggle navigation"
-      >
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-        <div class="navbar-nav">
-          <router-link class="nav-item nav-link active" to="/">
-            Home
-            <span class="sr-only">(current)</span>
-          </router-link>
-          <router-link class="nav-item nav-link" to="/myrecipes">My Recipes</router-link>
-          <!--  <router-link class="nav-item nav-link" to="/mealPlan"
-              >Meal Plan</router-link
-          >-->
-          <div class="fillThisSpaceInTheMiddle"></div>
-          <router-link v-if="!user" class="nav-item nav-link login" to="/register">Register</router-link>
-          <router-link v-if="!user" class="nav-item nav-link login" to="/login">Login</router-link>
-          <button v-if="user" v-on:click="logout" class="nav-item nav-link login logout">Logout</button>
+    <div :class="{'custom-wrapper':true, 'pure-g':true, 'open': menuOpen}">
+      <div class="pure-u-1 pure-u-md-1-3">
+        <div class="pure-menu">
+          <router-link class="pure-menu-heading custom-brand" to="/">Recipes</router-link>
+          <a
+            href="#"
+            :class="{'custom-toggle': true, 'x': showOverflowMenu }"
+            @click.prevent="toggleMenu"
+          >
+            <s class="bar"></s>
+            <s class="bar"></s>
+          </a>
         </div>
       </div>
-    </nav>
+      <div class="pure-u-1 pure-u-md-1-3">
+        <div :class="{'pure-menu':true, 'pure-menu-horizontal':horizontal}">
+          <ul class="pure-menu-list">
+            <li class="pure-menu-item">
+              <router-link class="pure-menu-link" to="/">Home</router-link>
+            </li>
+            <li class="pure-menu-item">
+              <router-link class="pure-menu-link" to="/myrecipes">My Recipes</router-link>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="pure-u-1 pure-u-md-1-3">
+        <div :class="{'pure-menu':true, 'pure-menu-horizontal':horizontal, 'custom-menu-3':true}">
+          <ul class="pure-menu-list">
+            <li class="pure-menu-item">
+              <router-link v-if="!user" class="pure-menu-link" to="/register">Register</router-link>
+            </li>
+            <li class="pure-menu-item">
+              <router-link v-if="!user" class="pure-menu-link" to="/login">Login</router-link>
+            </li>
+            <li class="pure-menu-item">
+              <a v-if="user" v-on:click.prevent="logout" class="pure-menu-link">Logout</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
     <router-view/>
     <footer>
       <p>
@@ -42,18 +54,50 @@
 
 <script>
 export default {
+  data: () => {
+    return {
+      menuOpen: false,
+      horizontal: true,
+      showOverflowMenu: false
+    };
+  },
   computed: {
     user() {
       return this.$store.state.user;
     }
   },
   async created() {
-    await this.$store.dispatch("getUser");
+    await this.$store.dispatch("user/getUser");
+  },
+  ready: function() {
+    window.addEventListener("resize", this.closeMenu);
+  },
+  beforeDestroy: function() {
+    window.removeEventListener("resize", this.closeMenu);
   },
   methods: {
     logout() {
-      this.$store.dispatch("logout");
+      this.$store.dispatch("user/logout");
       this.$router.push("/");
+    },
+    toggleHorizontal() {
+      this.horizontal = !this.horizontal;
+    },
+    toggleMenu() {
+      if (this.menuOpen) {
+        setTimeout(() => {
+          this.toggleHorizontal();
+        }, 500);
+      } else {
+        this.toggleHorizontal();
+      }
+      this.menuOpen = !this.menuOpen;
+      this.showOverflowMenu = !this.showOverflowMenu;
+    },
+    closeMenu() {
+      if (this.menuOpen) {
+        this.toggleMenu();
+      }
     }
   }
 };
@@ -77,11 +121,6 @@ main {
   flex-grow: 1;
   display: flex;
   flex-direction: column;
-}
-
-nav {
-  flex-shrink: 0;
-  flex-grow: 0;
 }
 
 p {
@@ -134,138 +173,6 @@ button img {
   max-width: 20px;
 }
 
-/* HOME PAGE -----------------------------------------------------------------------------------------------------*/
-.mainPageContent {
-  display: flex;
-  justify-content: center;
-  flex-direction: column;
-}
-
-.masonry {
-  /* Masonry container */
-  column-count: 4;
-  column-gap: 1em;
-}
-.masonry figure {
-  /* Masonry bricks or child elements */
-  background-color: rgb(42, 167, 158);
-  display: inline-block;
-  margin: 0 0 1em;
-  width: 100%;
-  box-shadow: 0.2em 0.2em 0.2em 0.2em rgb(175, 170, 153);
-  height: auto;
-}
-
-/* MY RECIPES PAGE -----------------------------------------------------------------------------------------------------*/
-.myRecipeContent {
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  margin: 0px;
-  align-self: flex-start;
-  width: 100%;
-}
-
-.myRecipeContent h1 {
-  margin-top: 1em;
-}
-
-.myRecipeList {
-  padding-top: 2em;
-  margin-left: 0em;
-  background-color: rgb(42, 167, 158);
-  align-self: stretch;
-  min-width: 225px;
-}
-
-.selected {
-  background-color: rgb(46, 185, 176);
-  font-weight: bold;
-}
-
-.myRecipeList ul {
-  padding-inline-start: 0em;
-  margin-block-start: 0em;
-}
-
-.myRecipeList li {
-  padding: 5px 2em;
-  font-style: italic;
-}
-
-.myRecipeList li:hover {
-  background-color: rgb(84, 195, 188);
-}
-
-.myRecipeList ul {
-  list-style: none;
-}
-
-.menu {
-  display: flex;
-  justify-content: space-between;
-  margin: 0px 35px;
-}
-
-.controls {
-  display: flex;
-  flex-direction: row;
-}
-.largeSelector {
-  padding: 5px;
-  align-self: center;
-  margin-bottom: 0px;
-}
-
-.myRecipe {
-  margin: 35px;
-  display: flex;
-  align-items: center;
-  justify-content: space-around;
-  padding: 2em 1em;
-  box-shadow: 0.2em 0.2em 0.2em 0.2em rgb(131, 126, 109);
-  background-color: rgb(235, 221, 188);
-}
-
-.myRecipe figure {
-  display: flex;
-  flex-direction: column;
-  order: 1;
-  max-width: 40%;
-}
-/*
-.myRecipe img {
-  max-height: 60vh;
-}*/
-
-#spiceFigure {
-  min-width: 50%;
-  max-width: 60%;
-}
-
-.myRecipeSection {
-  display: flex;
-  flex-direction: column;
-  align-self: flex-start;
-  width: 100%;
-  height: 100%;
-}
-
-.myRecipe img {
-  align-self: center;
-}
-
-.recipeCard {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-}
-
-.error {
-  color: red;
-  font-size: 25px;
-}
-
 /* MEAL PLAN PAGE -----------------------------------------------------------------------------------------------------*/
 h3 {
   text-align: center;
@@ -296,99 +203,85 @@ label {
   box-shadow: 0.2em 0.2em 0.2em 0.2em rgb(175, 170, 153);
 }
 
-/* LOGIN PAGE -----------------------------------------------------------------------------------------------------*/
-
-.loginCard {
-  display: flex;
-  flex-direction: column;
-  margin: 30px;
-  padding: 20px;
-  background-color: rgb(42, 167, 158);
-  box-shadow: 0.2em 0.2em 0.2em 0.2em rgb(175, 170, 153);
-}
-
-.loginForm {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.smallCenteredHeader {
-  text-align: center;
-  font-weight: bold;
-  font-size: 1.4em;
-}
-
 /* NAV BAR -----------------------------------------------------------------------------------------------------*/
-.bg-dark {
-  background-color: rgb(64, 66, 77) !important;
+.custom-wrapper {
+  background-color: #ffd390;
+  -webkit-font-smoothing: antialiased;
+  height: 2.1em;
+  padding: 0.5em;
+  overflow: hidden;
+  -webkit-transition: height 0.5s;
+  -moz-transition: height 0.5s;
+  -ms-transition: height 0.5s;
+  transition: height 0.5s;
+  background-color: rgb(87, 89, 104);
 }
-
-.navbar-dark .navbar-brand {
+.pure-menu-link {
   color: white;
-  font-size: 1.5em;
+}
+.custom-brand {
+  color: white;
+}
+.custom-wrapper.open {
+  height: 14em;
 }
 
-.navbar-nav {
-  flex-grow: 1;
-  display: flex;
-}
-
-.navbar-dark .navbar-nav .nav-link {
-  color: rgba(143, 192, 169, 1);
-  font-size: 1.2em;
-}
-
-.navbar-dark .navbar-nav .active > .nav-link,
-.navbar-dark .navbar-nav .nav-link.active,
-.navbar-dark .navbar-nav .nav-link.show,
-.navbar-dark .navbar-nav .show > .nav-link {
-  color: rgb(42, 167, 158);
-}
-
-.navbar-dark .navbar-nav .nav-link:focus,
-.navbar-dark .navbar-nav .nav-link:hover {
-  color: rgba(200, 213, 185, 1);
-}
-
-.fillThisSpaceInTheMiddle {
-  flex-grow: 1;
-}
-
-.login {
+.custom-menu-3 {
   text-align: right;
-  /*background-color: rgb(106, 108, 124) !important;*/
-  /*border-left: 1px solid rgb(107, 110, 126); */
 }
 
-.logout {
-  background-color: transparent;
-  border-style: none;
+.custom-toggle {
+  width: 34px;
+  height: 34px;
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: none;
 }
 
-.logout:focus {
-  border-style: none;
-  outline: 0px;
+.custom-toggle .bar {
+  background-color: #777;
+  display: block;
+  width: 20px;
+  height: 2px;
+  border-radius: 100px;
+  position: absolute;
+  top: 18px;
+  right: 7px;
+  -webkit-transition: all 0.5s;
+  -moz-transition: all 0.5s;
+  -ms-transition: all 0.5s;
+  transition: all 0.5s;
 }
 
-/* Mobile Styles */
+.custom-toggle .bar:first-child {
+  -webkit-transform: translateY(-6px);
+  -moz-transform: translateY(-6px);
+  -ms-transform: translateY(-6px);
+  transform: translateY(-6px);
+}
 
-@media (max-width: 1000px) {
-  .login {
+.custom-toggle.x .bar {
+  -webkit-transform: rotate(45deg);
+  -moz-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  transform: rotate(45deg);
+}
+
+.custom-toggle.x .bar:first-child {
+  -webkit-transform: rotate(-45deg);
+  -moz-transform: rotate(-45deg);
+  -ms-transform: rotate(-45deg);
+  transform: rotate(-45deg);
+}
+
+@media (max-width: 47.999em) {
+  .custom-menu-3 {
     text-align: left;
   }
 
-  .myRecipe {
-    flex-direction: column;
-  }
-
-  .myRecipe figure {
-    max-width: 70%;
-  }
-
-  .masonry {
-    /* Masonry container */
-    column-count: 2;
+  .custom-toggle {
+    display: block;
   }
 }
 </style>

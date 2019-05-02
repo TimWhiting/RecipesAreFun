@@ -33,7 +33,7 @@ export default {
   methods: {
     async register() {
       try {
-        this.error = await this.$store.dispatch("register", {
+        this.error = await this.$store.dispatch("user/register", {
           name: this.name,
           username: this.username,
           password: this.password
@@ -48,4 +48,26 @@ export default {
 </script>
 
 <style scoped>
+/* LOGIN PAGE -----------------------------------------------------------------------------------------------------*/
+
+.loginCard {
+  display: flex;
+  flex-direction: column;
+  margin: 30px;
+  padding: 20px;
+  background-color: rgb(42, 167, 158);
+  box-shadow: 0.2em 0.2em 0.2em 0.2em rgb(175, 170, 153);
+}
+
+.loginForm {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.smallCenteredHeader {
+  text-align: center;
+  font-weight: bold;
+  font-size: 1.4em;
+}
 </style>

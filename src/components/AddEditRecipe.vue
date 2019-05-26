@@ -110,17 +110,19 @@ export default {
         );
       } else {
         if (!this.ingredients.contains(this.newIngredient)) {
-          let add = await this.$store.dispatch("notifications/question", {
+          this.$store.dispatch("notifications/question", {
             question: `Would you like to add ${this.newIngredient}`,
-            answers: ["yes", "no"]
+            answers: ["yes", "no"],
+            callback: result => {
+              if (result == "no") {
+                return;
+              } else {
+                this.$store.dispatch("ingredients/addNewIngredient", {
+                  name: this.newIngredient
+                });
+              }
+            }
           });
-          if (add == "no") {
-            return;
-          } else {
-            this.$store.dispatch("ingredients/addNewIngredient", {
-              name: this.newIngredient
-            });
-          }
         }
         this.newRecipe.ingredients.push(this.newIngredient);
         this.newIngredient = "";
